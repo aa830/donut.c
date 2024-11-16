@@ -29,4 +29,4 @@ More updates to come!
 **PLEASE MAKE SOME SUGGESTIONS FOR OTHER DONUT GIMMICKS I CAN ADD!**
 
 
-**CREDIT FOR THE ORIGINAL BASE DONUT.C SCRIPT GOES TO <script src="https://gist.github.com/gcr/1075131.js"></script>**
+**CREDIT FOR THE ORIGINAL BASE DONUT.C SCRIPT GOES TO https://gist.github.com/gcr/1075131**
