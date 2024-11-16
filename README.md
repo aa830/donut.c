@@ -24,3 +24,6 @@ Just be sure to add "--" as the argument before your hexcode.
 You now also have the `--rainbow` argument! Just run and see what it looks like!
 
 More updates to come!
+
+
+**PLEASE MAKE SOME SUGGESTIONS FOR OTHER DONUT GIMMICKS I CAN ADD!**
