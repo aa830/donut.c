@@ -15,7 +15,7 @@ Now, you can choose the colour that you want your donut to be, simply by running
 
 
 # Usage
-For example, if I wanted to run donut.c (compiled) with a shade of red:
+For example, if I wanted to run donut with a standard hex shade of red:
 
 `donut --FF0000`
 
