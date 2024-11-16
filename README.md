@@ -27,3 +27,6 @@ More updates to come!
 
 
 **PLEASE MAKE SOME SUGGESTIONS FOR OTHER DONUT GIMMICKS I CAN ADD!**
+
+
+**CREDIT FOR THE ORIGINAL BASE DONUT.C SCRIPT GOES TO @gcr <script src="https://gist.github.com/gcr/1075131.js"></script>**
