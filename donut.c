@@ -35,31 +35,35 @@ void printHelp() {
 }
 
 void printVersion() {
-    printf("donut.c version 0.1d\n");
+    printf("donut.c version 0.1f\n");
 }
 
 int main(int argc, char *argv[]) {
-    // Parse command line arguments
-    int opt;
-    while ((opt = getopt(argc, argv, "")) != -1) {
-        if (optind < argc) {
-            // Process long options
-            if (strcmp(argv[optind], "--help") == 0) {
-                printHelp();
-                return 0;
-            } else if (strcmp(argv[optind], "--version") == 0) {
-                printVersion();
-                return 0;
-            } else if (strncmp(argv[optind], "--speed", 7) == 0) {
-                speed = atof(argv[++optind]);  // Set speed from argument
-            } else if (strcmp(argv[optind], "--rainbow") == 0) {
-                rainbow = 1;  // Enable rainbow mode
-            } else if (strncmp(argv[optind], "--", 2) == 0) {
-                strncpy(color, argv[optind] + 2, 6);  // Extract color code
-                color[6] = '\0';  // Ensure null termination
+    // Check for command-line arguments
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--help") == 0) {
+            printHelp();
+            return 0;
+        } else if (strcmp(argv[i], "--version") == 0) {
+            printVersion();
+            return 0;
+        } else if (strncmp(argv[i], "--speed", 7) == 0) {
+            if (i + 1 < argc) {
+                speed = atof(argv[++i]);  // Set speed from argument
+            } else {
+                fprintf(stderr, "Error: --speed requires a value.\n");
+                return 1;
             }
+        } else if (strcmp(argv[i], "--rainbow") == 0) {
+            rainbow = 1;  // Enable rainbow mode
+        } else if (strncmp(argv[i], "--", 2) == 0) {
+            // Custom hex color
+            strncpy(color, argv[i] + 2, 6);  // Extract color code
+            color[6] = '\0';  // Ensure null termination
+        } else {
+            fprintf(stderr, "Error: Unknown option %s\n", argv[i]);
+            return 1;
         }
-        optind++;
     }
 
     // Animation logic
