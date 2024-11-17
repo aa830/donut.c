@@ -7,48 +7,80 @@
 int k;
 double sin(), cos();
 
+// Default settings
+double A = 0, B = 0;
+float speed = 0.04;  // Default speed
+char color[7] = "FFFFFF"; // Default color is white
+int rainbow = 0;  // Default no rainbow
+
 void setColor(const char *color) {
-    // This function sets the terminal text color using ANSI escape codes
     printf("\x1b[38;2;%d;%d;%dm", 
-           (int)strtol(color, NULL, 16) >> 16 & 0xFF,    // Red
-           (int)strtol(color, NULL, 16) >> 8 & 0xFF,     // Green
-           (int)strtol(color, NULL, 16) & 0xFF);         // Blue
+           (int)strtol(color, NULL, 16) >> 16 & 0xFF,  // Red
+           (int)strtol(color, NULL, 16) >> 8 & 0xFF,   // Green
+           (int)strtol(color, NULL, 16) & 0xFF);       // Blue
 }
 
 void resetColor() {
-    // Reset terminal color to default
     printf("\x1b[0m");
 }
 
-int main(int argc, char *argv[]) {
-    // Default color code (white)
-    char color[7] = "FFFFFF";
-    int rainbow = 0;
+void printHelp() {
+    printf("Usage: donut.c [OPTIONS]\n");
+    printf("\nOptions:\n");
+    printf("  -h, --help           Display help information.\n");
+    printf("  -v, --version        Display the version number.\n");
+    printf("  -s, --speed SPEED    Set the animation speed (higher is faster).\n");
+    printf("  --rainbow            Enable rainbow color mode.\n");
+    printf("  --<HEXCOLOR>         Set the color using a hex color code (e.g., --FF5733).\n");
+}
 
-    // Check for command-line arguments
-    if (argc > 1) {
-        if (strcmp(argv[1], "--rainbow") == 0) {
-            rainbow = 1; // Enable rainbow mode
-        } else if (strncmp(argv[1], "--", 2) == 0) {
-            // User passed a hex color code
-            strncpy(color, argv[1] + 2, 6);
-            color[6] = '\0'; // Ensure it's null-terminated
+void printVersion() {
+    printf("donut.c version 0.1a\n");
+}
+
+int main(int argc, char *argv[]) {
+    // Parse command line arguments
+    int opt;
+    while ((opt = getopt(argc, argv, "hvs:")) != -1) {
+        switch (opt) {
+            case 'h':  // Help
+                printHelp();
+                return 0;
+            case 'v':  // Version
+                printVersion();
+                return 0;
+            case 's':  // Speed
+                speed = atof(optarg);  // Set speed from argument
+                break;
+            default:
+                printHelp();
+                return 1;
         }
     }
 
-    float A = 0, B = 0;
+    // Parse for hex color and rainbow mode in the remaining arguments
+    for (int i = optind; i < argc; i++) {
+        if (strcmp(argv[i], "--rainbow") == 0) {
+            rainbow = 1;
+        } else if (strncmp(argv[i], "--", 2) == 0) {
+            strncpy(color, argv[i] + 2, 6);  // Extract color code
+            color[6] = '\0';  // Ensure null termination
+        }
+    }
+
+    // Animation logic
     float i, j;
     float z[1760];
     char b[1760];
 
-    printf("\x1b[2J"); // Clear the screen
+    printf("\x1b[2J");  // Clear the screen
 
     for (;;) {
-        memset(b, 32, 1760); // Fill the buffer with spaces
-        memset(z, 0, 7040);   // Reset the depth buffer
+        memset(b, 32, 1760);  // Fill the buffer with spaces
+        memset(z, 0, 7040);   // Reset depth buffer
 
-        for (j = 0; j < 6.28; j += 0.07) {    // 0 to 2*PI for j
-            for (i = 0; i < 6.28; i += 0.02) { // 0 to 2*PI for i
+        for (j = 0; j < 6.28; j += 0.07) {  // 0 to 2*PI for j
+            for (i = 0; i < 6.28; i += 0.02) {  // 0 to 2*PI for i
                 float sini = sin(i);
                 float cosi = cos(i);
                 float sinj = sin(j);
@@ -58,7 +90,7 @@ int main(int argc, char *argv[]) {
                 float cosB = cos(B);
                 float sinB = sin(B);
 
-                float cosj2 = cosj + 2;  // offset for torus
+                float cosj2 = cosj + 2;  // Offset for torus
                 float mess = 1 / (sini * cosj2 * sinA + sinj * cosA + 5);
                 float t = sini * cosj2 * cosA - sinj * sinA;
 
@@ -74,8 +106,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // Clear the screen and move the cursor to the top left
-        printf("\x1b[H");
+        printf("\x1b[H");  // Clear the screen and move cursor to top
 
         // Apply color if not in rainbow mode
         if (!rainbow) {
@@ -84,7 +115,7 @@ int main(int argc, char *argv[]) {
 
         // Print the buffer
         for (k = 0; k < 1760; k++) {
-            putchar(k % 80 ? b[k] : 10); // Print buffer contents, new line after every 80 chars
+            putchar(k % 80 ? b[k] : 10);  // Print buffer content
         }
 
         // Reset color if not in rainbow mode
@@ -92,8 +123,8 @@ int main(int argc, char *argv[]) {
             resetColor();
         }
 
-        A += 0.04;
-        B += 0.02;
+        A += speed;  // Increment A (angle)
+        B += speed / 2;  // Increment B (angle)
 
         if (rainbow) {
             // Change color rapidly in rainbow mode
@@ -103,7 +134,7 @@ int main(int argc, char *argv[]) {
             printf("\x1b[38;2;%d;%d;%dm", r, g, b);
         }
 
-        usleep(30000); // Small delay to control the speed of the animation
+        usleep(30000);  // Small delay to control animation speed
     }
 
     return 0;
