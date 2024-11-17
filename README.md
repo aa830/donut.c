@@ -1,5 +1,14 @@
 The famous `donut.c` program, but better!
 
+
+
+![](https://github.com/aa830/homebrew-donut.c/blob/master/ezgif-5-1fb6afb0e7.gif)
+
+
+
+
+
+
 # So whats the difference?
 
 Now, you can choose the colour that you want your donut to be, simply by running an argument with the hexcode of whatever colour you want!
