@@ -17,7 +17,7 @@ Now, you can choose the colour that you want your donut to be, simply by running
 
 ## Homebrew
 
-`brew tap aa830/donut.c`
+`brew tap aa830/formulae`
 
 
 `brew install donut`
