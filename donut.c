@@ -10,8 +10,9 @@ double sin(), cos();
 // Default settings
 double A = 0, B = 0;
 float speed = 0.04;  // Default speed
-char color[7] = "FFFFFF"; // Default color is white
-int rainbow = 0;  // Default no rainbow
+char color1[7] = "FFFFFF"; // Default color1 is white
+char color2[7] = "FFFFFF"; // Default color2 is white (no gradient)
+int gradient = 0;  // Default no gradient
 
 void setColor(const char *color) {
     printf("\x1b[38;2;%d;%d;%dm", 
@@ -31,11 +32,30 @@ void printHelp() {
     printf("  --version           Display the version number.\n");
     printf("  --speed SPEED       Set the animation speed (higher is faster).\n");
     printf("  --rainbow           Enable rainbow color mode.\n");
-    printf("  --<HEXCOLOR>        Set the color using a hex color code (e.g., --FF5733).\n");
+    printf("  --gradient          Enable gradient color mode between two hex colors.\n");
+    printf("  --<HEXCOLOR1>       Set the first color for the gradient using a hex color code (e.g., --FF5733).\n");
+    printf("  --<HEXCOLOR2>       Set the second color for the gradient using a hex color code (e.g., --3498DB).\n");
 }
 
 void printVersion() {
     printf("donut.c version v0.1-pre\n");
+}
+
+// Function to interpolate between two RGB colors
+void interpolateColor(char *result, const char *color1, const char *color2, float t) {
+    int r1 = (int)strtol(color1, NULL, 16) >> 16 & 0xFF;
+    int g1 = (int)strtol(color1, NULL, 16) >> 8 & 0xFF;
+    int b1 = (int)strtol(color1, NULL, 16) & 0xFF;
+
+    int r2 = (int)strtol(color2, NULL, 16) >> 16 & 0xFF;
+    int g2 = (int)strtol(color2, NULL, 16) >> 8 & 0xFF;
+    int b2 = (int)strtol(color2, NULL, 16) & 0xFF;
+
+    int r = (int)((1 - t) * r1 + t * r2);
+    int g = (int)((1 - t) * g1 + t * g2);
+    int b = (int)((1 - t) * b1 + t * b2);
+
+    sprintf(result, "%02X%02X%02X", r, g, b);
 }
 
 int main(int argc, char *argv[]) {
@@ -55,11 +75,17 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
         } else if (strcmp(argv[i], "--rainbow") == 0) {
-            rainbow = 1;  // Enable rainbow mode
+            gradient = 0;  // Disable gradient if rainbow is selected
+        } else if (strcmp(argv[i], "--gradient") == 0) {
+            gradient = 1;  // Enable gradient mode
         } else if (strncmp(argv[i], "--", 2) == 0) {
-            // Custom hex color
-            strncpy(color, argv[i] + 2, 6);  // Extract color code
-            color[6] = '\0';  // Ensure null termination
+            if (!color1[0]) {
+                strncpy(color1, argv[i] + 2, 6);  // Extract first color code
+                color1[6] = '\0';  // Ensure null termination
+            } else {
+                strncpy(color2, argv[i] + 2, 6);  // Extract second color code
+                color2[6] = '\0';  // Ensure null termination
+            }
         } else {
             fprintf(stderr, "Error: Unknown option %s\n", argv[i]);
             return 1;
@@ -106,9 +132,14 @@ int main(int argc, char *argv[]) {
 
         printf("\x1b[H");  // Clear the screen and move cursor to top
 
-        // Apply color if not in rainbow mode
-        if (!rainbow) {
-            setColor(color);
+        // Apply gradient color if enabled
+        if (gradient) {
+            static char gradientColor[7];
+            float t = (sin(A) + 1) / 2;  // t varies from 0 to 1
+            interpolateColor(gradientColor, color1, color2, t);
+            setColor(gradientColor);
+        } else {
+            setColor(color1);  // Use the first color if gradient is not enabled
         }
 
         // Print the buffer
@@ -116,21 +147,10 @@ int main(int argc, char *argv[]) {
             putchar(k % 80 ? b[k] : 10);  // Print buffer content
         }
 
-        // Reset color if not in rainbow mode
-        if (!rainbow) {
-            resetColor();
-        }
+        resetColor();  // Reset color after each frame
 
         A += speed;  // Increment A (angle)
         B += speed / 2;  // Increment B (angle)
-
-        if (rainbow) {
-            // Change color rapidly in rainbow mode
-            int r = (int)(127 * (1 + sin(A)));
-            int g = (int)(127 * (1 + sin(A + 2)));
-            int b = (int)(127 * (1 + sin(A + 4)));
-            printf("\x1b[38;2;%d;%d;%dm", r, g, b);
-        }
 
         usleep(30000);  // Small delay to control animation speed
     }
