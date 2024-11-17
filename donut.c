@@ -35,7 +35,7 @@ void printHelp() {
 }
 
 void printVersion() {
-    printf("donut.c version 0.1f\n");
+    printf("donut.c version v0.1-pre\n");
 }
 
 int main(int argc, char *argv[]) {
