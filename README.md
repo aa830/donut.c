@@ -25,8 +25,13 @@ You now also have the `--rainbow` argument! Just run and see what it looks like!
 
 More updates to come!
 
+You can now change the speed that the donut spins at by typing:
 
-**PLEASE MAKE SOME SUGGESTIONS FOR OTHER DONUT GIMMICKS I CAN ADD!**
+`donut --speed <VALUE>`
+
+You can also stack arguments, I can use a `--rainbow --speed 5` argument, which will use the rainbow colour scheme on the donut but also spin it at a speed of 5.
+
+**For more details, use `donut --help` or man donut**
 
 
 
