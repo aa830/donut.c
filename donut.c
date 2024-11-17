@@ -27,45 +27,39 @@ void resetColor() {
 void printHelp() {
     printf("Usage: donut.c [OPTIONS]\n");
     printf("\nOptions:\n");
-    printf("  -h, --help           Display help information.\n");
-    printf("  -v, --version        Display the version number.\n");
-    printf("  -s, --speed SPEED    Set the animation speed (higher is faster).\n");
-    printf("  --rainbow            Enable rainbow color mode.\n");
-    printf("  --<HEXCOLOR>         Set the color using a hex color code (e.g., --FF5733).\n");
+    printf("  --help              Display help information.\n");
+    printf("  --version           Display the version number.\n");
+    printf("  --speed SPEED       Set the animation speed (higher is faster).\n");
+    printf("  --rainbow           Enable rainbow color mode.\n");
+    printf("  --<HEXCOLOR>        Set the color using a hex color code (e.g., --FF5733).\n");
 }
 
 void printVersion() {
-    printf("donut.c version 0.1a\n");
+    printf("donut.c version 0.1d\n");
 }
 
 int main(int argc, char *argv[]) {
     // Parse command line arguments
     int opt;
-    while ((opt = getopt(argc, argv, "hvs:")) != -1) {
-        switch (opt) {
-            case 'h':  // Help
+    while ((opt = getopt(argc, argv, "")) != -1) {
+        if (optind < argc) {
+            // Process long options
+            if (strcmp(argv[optind], "--help") == 0) {
                 printHelp();
                 return 0;
-            case 'v':  // Version
+            } else if (strcmp(argv[optind], "--version") == 0) {
                 printVersion();
                 return 0;
-            case 's':  // Speed
-                speed = atof(optarg);  // Set speed from argument
-                break;
-            default:
-                printHelp();
-                return 1;
+            } else if (strncmp(argv[optind], "--speed", 7) == 0) {
+                speed = atof(argv[++optind]);  // Set speed from argument
+            } else if (strcmp(argv[optind], "--rainbow") == 0) {
+                rainbow = 1;  // Enable rainbow mode
+            } else if (strncmp(argv[optind], "--", 2) == 0) {
+                strncpy(color, argv[optind] + 2, 6);  // Extract color code
+                color[6] = '\0';  // Ensure null termination
+            }
         }
-    }
-
-    // Parse for hex color and rainbow mode in the remaining arguments
-    for (int i = optind; i < argc; i++) {
-        if (strcmp(argv[i], "--rainbow") == 0) {
-            rainbow = 1;
-        } else if (strncmp(argv[i], "--", 2) == 0) {
-            strncpy(color, argv[i] + 2, 6);  // Extract color code
-            color[6] = '\0';  // Ensure null termination
-        }
+        optind++;
     }
 
     // Animation logic
