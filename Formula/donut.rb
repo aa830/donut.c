@@ -13,7 +13,7 @@ class Donut < Formula
     bin.install "donut"
 
     # Install the man page
-    man1.install "man/man1/donut.c.1"
+    man1.install "man/man1/donut.1"
   end
 
   test do
