@@ -7,6 +7,11 @@ class Donut < Formula
 
   def install
     bin.install "donut"  # This line must match the binary you want to install
+      # Other installation steps for donut.c
+    man1.install "man/man1/donut.c.1"  
+      # Install the man page
+
+    
   end
 
   test do
