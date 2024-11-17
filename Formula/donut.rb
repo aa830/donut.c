@@ -3,7 +3,7 @@ class Donut < Formula
   homepage "https://github.com/aa830/donut.c"
   url "https://github.com/aa830/homebrew-donut.c/archive/refs/tags/0.1d.tar.gz"
   sha256 "b8ed3978d5bdaf839727e8d3c745786ac1afa023c05a50486438859646611fb8"
-  version "0.1c"
+  version "0.1d"
 
   def install
     # Compile the project using `make`
