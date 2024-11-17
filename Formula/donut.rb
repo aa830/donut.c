@@ -6,15 +6,18 @@ class Donut < Formula
   version "0.1c"
 
   def install
-    bin.install "donut"  # This line must match the binary you want to install
-      # Other installation steps for donut.c
-    man1.install "man/man1/donut.c.1"  
-      # Install the man page
+    # Compile the project using `make`
+    system "make"  # Ensure a `Makefile` exists in the project root directory
 
-    
+    # Install the compiled binary to Homebrew's bin directory
+    bin.install "donut"
+
+    # Install the man page
+    man1.install "man/man1/donut.c.1"
   end
 
   test do
+    # Simple test to verify the installation
     system "#{bin}/donut", "--help"
   end
 end
