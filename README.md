@@ -28,6 +28,8 @@ For example, if I wanted to run donut with a standard hex shade of red:
 
 `donut --FF0000`
 
+I can also stack two hexcodes to make the donut transition between the two colours.
+
 Just be sure to add "--" as the argument before your hexcode.
 
 You now also have the `--rainbow` argument! Just run and see what it looks like!
