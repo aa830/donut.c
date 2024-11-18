@@ -34,8 +34,8 @@ void printHelp() {
     printf("  --speed SPEED       Set the animation speed (higher is faster).\n");
     printf("  --rainbow           Enable rainbow color mode.\n");
     printf("  --gradient          Enable gradient color mode between two hex colors.\n");
-    printf("  --<HEXCOLOR1>       Set the first color for the gradient using a hex color code (e.g., --FF5733).\n");
-    printf("  --<HEXCOLOR2>       Set the second color for the gradient using a hex color code (e.g., --3498DB).\n");
+    printf("  --color1 <HEXCODE>  Set the first color for the gradient or solid color using a hex code (e.g., --color1 FF5733).\n");
+    printf("  --color2 <HEXCODE>  Set the second color for the gradient using a hex code (e.g., --color2 3498DB).\n");
 }
 
 void printVersion() {
@@ -103,13 +103,21 @@ int main(int argc, char *argv[]) {
             rainbow = 1;  // Enable rainbow mode
         } else if (strcmp(argv[i], "--gradient") == 0) {
             gradient = 1;  // Enable gradient mode
-        } else if (strncmp(argv[i], "--", 2) == 0) {
-            if (!color1[0]) {
-                strncpy(color1, argv[i] + 2, 6);  // Extract first color code
+        } else if (strcmp(argv[i], "--color1") == 0) {
+            if (i + 1 < argc) {
+                strncpy(color1, argv[++i], 6);  // Set color1 from argument
                 color1[6] = '\0';  // Ensure null termination
             } else {
-                strncpy(color2, argv[i] + 2, 6);  // Extract second color code
+                fprintf(stderr, "Error: --color1 requires a hex color code.\n");
+                return 1;
+            }
+        } else if (strcmp(argv[i], "--color2") == 0) {
+            if (i + 1 < argc) {
+                strncpy(color2, argv[++i], 6);  // Set color2 from argument
                 color2[6] = '\0';  // Ensure null termination
+            } else {
+                fprintf(stderr, "Error: --color2 requires a hex color code.\n");
+                return 1;
             }
         } else {
             fprintf(stderr, "Error: Unknown option %s\n", argv[i]);
