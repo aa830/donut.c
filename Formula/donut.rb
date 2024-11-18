@@ -2,7 +2,7 @@ class Donut < Formula
   desc "The original donut.c, but better!"
   homepage "https://github.com/aa830/donut.c"
   url "https://github.com/aa830/homebrew-donut.c/archive/refs/tags/0.1.6.tar.gz"
-  sha256 "1a4db4d037f8ebfc0c604d8f9abb619a673efb3289baf840a788d886bfc0cdea"
+  sha256 "18284816a6c955c9720a2db6db715e00c6b730aa5201e71d3ac3bf0e22d8a5ab"
   version "0.1.6"
 
   def install
