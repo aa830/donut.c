@@ -33,9 +33,8 @@ void printHelp() {
     printf("  --version           Display the version number.\n");
     printf("  --speed SPEED       Set the animation speed (higher is faster).\n");
     printf("  --rainbow           Enable rainbow color mode.\n");
-    printf("  --gradient          Enable gradient color mode between two hex colors.\n");
-    printf("  --color1 <HEXCODE>  Set the first color for the gradient or solid color using a hex code (e.g., --color1 FF5733).\n");
-    printf("  --color2 <HEXCODE>  Set the second color for the gradient using a hex code (e.g., --color2 3498DB).\n");
+    printf("  --<HEXCOLOR1>       Set a solid color using a hex code (e.g., --FF5733).\n");
+    printf("  --<HEXCOLOR1> --<HEXCOLOR2> Enable gradient mode between two hex colors.\n");
 }
 
 void printVersion() {
@@ -54,7 +53,7 @@ void interpolateColor(char *result, const char *color1, const char *color2, floa
 
     int r = (int)((1 - t) * r1 + t * r2);
     int g = (int)((1 - t) * g1 + t * g2);
-    int b = (int)((1 - t) * b1 + t * b2);
+    int b = (int)((1 - t) * b1 + t * g2);
 
     sprintf(result, "%02X%02X%02X", r, g, b);
 }
@@ -84,6 +83,8 @@ void hueToRGB(int hue, char *result) {
 }
 
 int main(int argc, char *argv[]) {
+    int colorCount = 0;
+
     // Check for command-line arguments
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--help") == 0) {
@@ -101,22 +102,20 @@ int main(int argc, char *argv[]) {
             }
         } else if (strcmp(argv[i], "--rainbow") == 0) {
             rainbow = 1;  // Enable rainbow mode
-        } else if (strcmp(argv[i], "--gradient") == 0) {
-            gradient = 1;  // Enable gradient mode
-        } else if (strcmp(argv[i], "--color1") == 0) {
-            if (i + 1 < argc) {
-                strncpy(color1, argv[++i], 6);  // Set color1 from argument
-                color1[6] = '\0';  // Ensure null termination
+        } else if (argv[i][0] == '-' && argv[i][1] == '-') {
+            if (strlen(argv[i]) == 8) {  // Check for hex color format "--XXXXXX"
+                if (colorCount == 0) {
+                    strncpy(color1, argv[i] + 2, 6);  // Set color1 from argument
+                    color1[6] = '\0';  // Ensure null termination
+                    colorCount++;
+                } else if (colorCount == 1) {
+                    strncpy(color2, argv[i] + 2, 6);  // Set color2 from second argument
+                    color2[6] = '\0';  // Ensure null termination
+                    gradient = 1;  // Enable gradient if two colors are provided
+                    colorCount++;
+                }
             } else {
-                fprintf(stderr, "Error: --color1 requires a hex color code.\n");
-                return 1;
-            }
-        } else if (strcmp(argv[i], "--color2") == 0) {
-            if (i + 1 < argc) {
-                strncpy(color2, argv[++i], 6);  // Set color2 from argument
-                color2[6] = '\0';  // Ensure null termination
-            } else {
-                fprintf(stderr, "Error: --color2 requires a hex color code.\n");
+                fprintf(stderr, "Error: Invalid color format %s. Use --XXXXXX format.\n", argv[i]);
                 return 1;
             }
         } else {
