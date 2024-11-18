@@ -1,5 +1,7 @@
 The famous `donut.c` program, but better!
 
+`Copyright (c) Aarav Darbari <aarvd2030@gmail.com>`
+
 
 
 ![](https://github.com/aa830/homebrew-donut.c/blob/master/ezgif-5-1fb6afb0e7.gif)
