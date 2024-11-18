@@ -13,6 +13,7 @@ float speed = 0.04;  // Default speed
 char color1[7] = "FFFFFF"; // Default color1 is white
 char color2[7] = "FFFFFF"; // Default color2 is white (no gradient)
 int gradient = 0;  // Default no gradient
+int rainbow = 0;   // Rainbow mode flag
 
 void setColor(const char *color) {
     printf("\x1b[38;2;%d;%d;%dm", 
@@ -58,6 +59,30 @@ void interpolateColor(char *result, const char *color1, const char *color2, floa
     sprintf(result, "%02X%02X%02X", r, g, b);
 }
 
+// Function to convert hue to RGB
+void hueToRGB(int hue, char *result) {
+    float h = (float)(hue % 360) / 60.0;
+    int c = 255;
+    int x = (int)(c * (1 - fabs(fmod(h, 2) - 1)));
+
+    int r, g, b;
+    if (h < 1) {
+        r = c; g = x; b = 0;
+    } else if (h < 2) {
+        r = x; g = c; b = 0;
+    } else if (h < 3) {
+        r = 0; g = c; b = x;
+    } else if (h < 4) {
+        r = 0; g = x; b = c;
+    } else if (h < 5) {
+        r = x; g = 0; b = c;
+    } else {
+        r = c; g = 0; b = x;
+    }
+
+    sprintf(result, "%02X%02X%02X", r, g, b);
+}
+
 int main(int argc, char *argv[]) {
     // Check for command-line arguments
     for (int i = 1; i < argc; i++) {
@@ -75,7 +100,7 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
         } else if (strcmp(argv[i], "--rainbow") == 0) {
-            gradient = 0;  // Disable gradient if rainbow is selected
+            rainbow = 1;  // Enable rainbow mode
         } else if (strcmp(argv[i], "--gradient") == 0) {
             gradient = 1;  // Enable gradient mode
         } else if (strncmp(argv[i], "--", 2) == 0) {
@@ -98,6 +123,8 @@ int main(int argc, char *argv[]) {
     char b[1760];
 
     printf("\x1b[2J");  // Clear the screen
+
+    int hue = 0;  // Starting hue for rainbow mode
 
     for (;;) {
         memset(b, 32, 1760);  // Fill the buffer with spaces
@@ -132,8 +159,13 @@ int main(int argc, char *argv[]) {
 
         printf("\x1b[H");  // Clear the screen and move cursor to top
 
-        // Apply gradient color if enabled
-        if (gradient) {
+        // Apply rainbow mode if enabled
+        if (rainbow) {
+            static char rainbowColor[7];
+            hueToRGB(hue, rainbowColor);
+            setColor(rainbowColor);
+            hue = (hue + 5) % 360;  // Increment hue for next frame
+        } else if (gradient) {
             static char gradientColor[7];
             float t = (sin(A) + 1) / 2;  // t varies from 0 to 1
             interpolateColor(gradientColor, color1, color2, t);
