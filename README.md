@@ -50,6 +50,8 @@ You can now change the speed that the donut spins at by typing:
 
 You can also stack arguments, I can use a `--rainbow --speed 5` argument, which will use the rainbow colour scheme on the donut but also spin it at a speed of 5.
 
+And now! You can change the radius of your donut, using `--radius`. The lower the value the thiccer the donut will get!
+
 **For more details, use `donut --help` or `man donut`**
 
 
